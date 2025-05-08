@@ -11,7 +11,7 @@ import logging
 import time
 import urllib.parse
 from datetime import datetime, timedelta
-from collections import defaultdict
+from collections import defaultdict, Counter
 from requests.packages.urllib3.util.retry import Retry
 from requests.adapters import HTTPAdapter
 import traceback
@@ -719,4 +719,223 @@ class NYCLobbyingDataSource(LobbyingDataSource):
         registrant_name = f"NYC Lobbyist Firm {random.randint(1000, 9999)}"
         
         client = {
-            'id': f"c-{random.randint(10000, 99999
+            'id': f"c-{random.randint(10000, 99999)}",
+            'name': client_name,
+            'description': f"Company involved in {random.choice(nyc_issues).lower()}",
+            'address': f"{random.randint(100, 999)} Madison Avenue, New York, NY 10022"
+        }
+        
+        registrant = {
+            'id': f"r-{random.randint(10000, 99999)}",
+            'name': registrant_name,
+            'description': 'Lobbying and Government Relations Firm',
+            'contact': f"{random.choice(['John', 'Sarah', 'Michael', 'Jennifer'])} {random.choice(['Smith', 'Johnson', 'Williams', 'Brown'])}",
+            'address': f"{random.randint(100, 999)} 3rd Avenue, Suite {random.randint(100, 999)}, New York, NY 10017"
+        }
+        
+        # Generate random filing period and date
+        filing_month = random.randint(1, 12)
+        filing_day = random.randint(1, 28)
+        filing_date = f"{year}-{filing_month:02d}-{filing_day:02d}"
+        filing_period = f"January 1 - December 31, {year}"
+        
+        # Generate random filing type
+        filing_type = random.choice(list(self.FILING_TYPES.keys()))
+        
+        # Generate subjects/activities
+        subjects = []
+        num_subjects = random.randint(1, 4)
+        selected_issues = random.sample(nyc_issues, min(num_subjects, len(nyc_issues)))
+        
+        for issue in selected_issues:
+            # Select 1-3 agencies for this issue
+            selected_agencies = random.sample(nyc_agencies, min(random.randint(1, 3), len(nyc_agencies)))
+            
+            government_entities = []
+            for agency in selected_agencies:
+                government_entities.append({
+                    'name': agency,
+                    'type': 'City Agency'
+                })
+            
+            # Create a description
+            description = f"Matters related to {issue.lower()} regulations and policies affecting {client_name}."
+            
+            subjects.append({
+                'description': description,
+                'general_issue_code': issue.upper().replace(' ', '_'),
+                'general_issue_code_display': issue,
+                'government_entities': government_entities
+            })
+        
+        # Generate random compensation and expenses
+        compensation = round(random.randint(20, 100) * 1000, -3)
+        expenses = round(random.randint(1, 10) * 1000, -2)
+        
+        # Create mock filing detail
+        filing_detail = {
+            'id': filing_id,
+            'filing_uuid': filing_id,
+            'filing_type': filing_type,
+            'filing_type_display': self.FILING_TYPES.get(filing_type, filing_type),
+            'filing_year': year,
+            'filing_period': filing_period,
+            'period_display': filing_period,
+            'dt_posted': filing_date,
+            'filing_date': filing_date,
+            'registrant': registrant,
+            'client': client,
+            'income': compensation,
+            'expenses': expenses,
+            'amount': compensation,
+            'amount_reported': True,
+            'lobbying_activities': subjects,
+            'document_url': f"https://example.com/nyc/filings/{filing_id}.pdf",
+            # Add metadata to clearly identify as mock data
+            'meta': {
+                'is_mock': True
+            }
+        }
+        
+        return filing_detail
+    
+    def fetch_visualization_data(self, query, filters=None):
+        """
+        Fetch data for visualizations.
+        
+        Args:
+            query: Search term (person or organization name)
+            filters: Additional filters to apply to the search
+            
+        Returns:
+            tuple: (visualization_data, error)
+        """
+        try:
+            # Get a larger set of results for visualization
+            results, count, _, error = self.search_filings(
+                query, 
+                filters=filters,
+                page=1, 
+                page_size=100
+            )
+            
+            if error or not results:
+                return None, error if error else "No data found for visualization"
+            
+            # Prepare data for visualization
+            years_data = defaultdict(int)
+            registrants_data = defaultdict(int)
+            agencies_data = defaultdict(int)
+            issues_data = defaultdict(int)
+            amounts_data = []
+            
+            # Process results
+            for filing in results:
+                # Track filing years
+                if filing.get("filing_year"):
+                    try:
+                        year = str(filing["filing_year"]).strip()
+                        if year.isdigit():
+                            years_data[year] += 1
+                    except (ValueError, TypeError):
+                        pass
+                
+                # Track registrants
+                if filing.get("registrant") and filing["registrant"].get("name"):
+                    registrants_data[filing["registrant"]["name"]] += 1
+                
+                # Track amounts if available
+                if filing.get("income") and filing.get("filing_date"):
+                    try:
+                        amount = float(filing["income"])
+                        amounts_data.append((filing["filing_date"], amount))
+                    except (ValueError, TypeError):
+                        pass
+                
+                # Track issues and agencies
+                activities = filing.get("lobbying_activities", [])
+                for activity in activities:
+                    issue = activity.get("general_issue_code_display")
+                    if issue:
+                        issues_data[issue] += 1
+                    
+                    govt_entities = activity.get("government_entities", [])
+                    for entity in govt_entities:
+                        agency = entity.get("name")
+                        if agency:
+                            agencies_data[agency] += 1
+            
+            # Sort years data
+            sorted_years = sorted(years_data.items())
+            years_chart = {
+                "labels": [year for year, _ in sorted_years],
+                "values": [count for _, count in sorted_years]
+            }
+            
+            # Get top registrants
+            top_registrants = sorted(registrants_data.items(), key=lambda x: x[1], reverse=True)[:10]
+            registrants_chart = {
+                "labels": [name for name, _ in top_registrants],
+                "values": [count for _, count in top_registrants]
+            }
+            
+            # Get top agencies
+            top_agencies = sorted(agencies_data.items(), key=lambda x: x[1], reverse=True)[:10]
+            agencies_chart = {
+                "labels": [name for name, _ in top_agencies],
+                "values": [count for _, count in top_agencies]
+            }
+            
+            # Get top issues
+            top_issues = sorted(issues_data.items(), key=lambda x: x[1], reverse=True)[:10]
+            issues_chart = {
+                "labels": [name for name, _ in top_issues],
+                "values": [count for _, count in top_issues]
+            }
+            
+            # Process spending data
+            spending_by_period = defaultdict(float)
+            for date, amount in amounts_data:
+                # Convert to year-month format
+                if isinstance(date, str):
+                    try:
+                        date_obj = datetime.strptime(date, "%Y-%m-%d")
+                        period = date_obj.strftime("%Y-%m")
+                    except:
+                        # If parse fails, use the year part
+                        period = date[:4] if len(date) >= 4 else "Unknown"
+                else:
+                    period = "Unknown"
+                
+                spending_by_period[period] += amount
+            
+            # Sort by period
+            sorted_spending = sorted(spending_by_period.items())
+            spending_chart = {
+                "labels": [period for period, _ in sorted_spending],
+                "values": [amount for _, amount in sorted_spending]
+            }
+            
+            visualization_data = {
+                "years_data": years_chart,
+                "top_entities": registrants_chart,
+                "spending_trend": spending_chart,
+                "issue_areas": issues_chart,
+                "government_entities": agencies_chart
+            }
+            
+            return visualization_data, None
+            
+        except Exception as e:
+            logger.error(f"Error generating visualization data: {str(e)}")
+            return None, f"An error occurred while generating visualization data: {str(e)}"
+    
+    @property
+    def source_name(self) -> str:
+        """Return the name of this data source."""
+        return "NYC Lobbying"
+    
+    @property
+    def government_level(self) -> str:
+        """Return the level of government (Federal, State, Local)."""
+        return "Local"
