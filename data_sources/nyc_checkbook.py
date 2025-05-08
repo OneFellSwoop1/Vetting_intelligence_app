@@ -494,4 +494,281 @@ class NYCCheckbookDataSource(LobbyingDataSource):
             "page": page,
             "has_next": page < total_pages,
             "has_prev": page > 1,
-            "count": base_count
+            "count": base_count,
+            "page_size": page_size
+        }
+        
+        logger.info(f"Generated {len(mock_results)} mock NYC Checkbook results for '{query}' (page {page} of {total_pages}, total: {base_count})")
+        
+        return mock_results, base_count, pagination, None
+        
+    def _mock_filing_detail(self, filing_id):
+        """Generate a mock contract detail based on the filing ID."""
+        import random
+        import hashlib
+        
+        # Seed with filing ID for consistent results
+        random.seed(hash(filing_id))
+        
+        # Parse parts from the ID if possible
+        parts = filing_id.split('-')
+        year = 2023
+        if len(parts) > 1:
+            try:
+                year = int(parts[1][:4])
+            except (IndexError, ValueError):
+                pass
+        
+        # Generate a random contract type
+        contract_type = random.choice(list(self.CONTRACT_TYPES.keys()))
+        
+        # Generate vendor and agency
+        vendor_name = f"NYC Vendor {random.randint(1000, 9999)}"
+        agency_name = random.choice([
+            'Department of Education', 'Health and Hospitals Corporation',
+            'Department of Transportation', 'Department of Environmental Protection',
+            'Department of Parks and Recreation', 'Department of Sanitation',
+            'Department of Housing Preservation and Development', 'Police Department'
+        ])
+        
+        # Generate dates
+        start_month = random.randint(1, 12)
+        start_day = random.randint(1, 28)
+        start_date = f"{year}-{start_month:02d}-{start_day:02d}"
+        
+        # Contract duration 1-5 years
+        duration_years = random.randint(1, 5)
+        end_year = year + duration_years
+        end_date = f"{end_year}-{start_month:02d}-{start_day:02d}"
+        
+        # Generate contract amount
+        amount = round(random.uniform(250000, 10000000), -3)  # Round to nearest thousand
+        
+        # Generate contract purpose from list of NYC contract types
+        contract_purposes = [
+            'Technology Services', 'Consulting Services', 'Construction Services',
+            'Professional Services', 'Equipment and Supplies', 'Maintenance Services',
+            'Engineering Services', 'Educational Services', 'Healthcare Services',
+            'Transportation Services', 'Social Services', 'Security Services'
+        ]
+        purpose = f"{random.choice(contract_purposes)} for {agency_name}"
+        
+        # Create detailed description
+        descriptions = [
+            f"Provision of {purpose.lower()} to support agency operations.",
+            f"Contract for {purpose.lower()} in accordance with agency requirements.",
+            f"Vendor will provide {purpose.lower()} as specified in the scope of work.",
+            f"Implementation of {purpose.lower()} program for fiscal year {year}.",
+            f"Comprehensive {purpose.lower()} solution for agency needs."
+        ]
+        description = random.choice(descriptions)
+        
+        # Create mock contract detail
+        contract_detail = {
+            'id': filing_id,
+            'filing_uuid': filing_id,
+            'contract_id': filing_id,
+            'filing_type': contract_type,
+            'filing_type_display': self.CONTRACT_TYPES.get(contract_type, contract_type),
+            'filing_year': year,
+            'fiscal_year': year,
+            'start_date': start_date,
+            'end_date': end_date,
+            'period_display': f"{start_date} to {end_date}",
+            'vendor_name': vendor_name,
+            'vendor_id': f"V-{hash(vendor_name) % 100000}",
+            'agency_name': agency_name,
+            'agency_id': f"A-{hash(agency_name) % 100000}",
+            'purpose': purpose,
+            'description': description,
+            'maximum_contract_amount': amount,
+            'original_amount': round(amount * 0.9, -3),  # Original was a bit lower
+            'current_amount': amount,
+            'spend_to_date': round(amount * random.uniform(0.1, 0.8), -3),  # Random spend amount
+            'balance': round(amount * random.uniform(0.2, 0.9), -3),  # Random balance
+            'registered_date': start_date,
+            'address': f"{random.randint(100, 999)} {random.choice(['Broadway', 'Madison Ave', 'Lexington Ave', '5th Ave'])}, New York, NY",
+            'contact_name': f"{random.choice(['John', 'Sarah', 'Michael', 'Jennifer'])} {random.choice(['Smith', 'Johnson', 'Williams', 'Brown'])}",
+            'solicitation_method': random.choice(['Competitive Sealed Bid', 'Request for Proposals', 'Sole Source', 'Emergency']),
+            'procurement_method': random.choice(['Competitive', 'Non-Competitive']),
+            'award_method': random.choice(['Low Bid', 'Best Value', 'Qualification Based']),
+            'contract_category': random.choice(['Expense', 'Revenue', 'Requirements']),
+            'industry': random.choice(['Information Technology', 'Construction', 'Health', 'Education', 'Professional Services']),
+            
+            # Map to standardized format for compatibility
+            'filing_period': f"{start_date} - {end_date}",
+            'dt_posted': start_date,
+            'filing_date': start_date,
+            'registrant': {
+                'id': f"V-{hash(vendor_name) % 100000}",
+                'name': vendor_name,
+                'description': 'NYC Vendor',
+                'address': f"{random.randint(100, 999)} {random.choice(['Broadway', 'Madison Ave', 'Lexington Ave', '5th Ave'])}, New York, NY",
+                'contact': f"{random.choice(['John', 'Sarah', 'Michael', 'Jennifer'])} {random.choice(['Smith', 'Johnson', 'Williams', 'Brown'])}"
+            },
+            'client': {
+                'id': f"A-{hash(agency_name) % 100000}",
+                'name': agency_name,
+                'description': 'NYC Government Agency'
+            },
+            'income': amount,
+            'expenses': None,
+            'amount': amount,
+            'lobbying_activities': [
+                {
+                    'description': description,
+                    'general_issue_code': contract_type,
+                    'general_issue_code_display': self.CONTRACT_TYPES.get(contract_type, contract_type),
+                    'government_entities': [
+                        {'name': agency_name, 'type': 'NYC Agency'}
+                    ]
+                }
+            ],
+            'document_url': f"https://www.checkbooknyc.com/contract_details/{filing_id}",
+            
+            # Add metadata to clearly identify as mock data
+            'meta': {
+                'is_mock': True
+            }
+        }
+        
+        return contract_detail
+    
+    def fetch_visualization_data(self, query, filters=None):
+        """
+        Fetch data for visualizations.
+        
+        Args:
+            query: Search term (person or organization name)
+            filters: Additional filters to apply to the search
+            
+        Returns:
+            tuple: (visualization_data, error)
+        """
+        try:
+            # Get a larger set of results for visualization
+            results, count, _, error = self.search_filings(
+                query, 
+                filters=filters,
+                page=1, 
+                page_size=100
+            )
+            
+            if error or not results:
+                return None, error if error else "No data found for visualization"
+            
+            # Prepare data for visualization
+            years_data = defaultdict(int)
+            agencies_data = defaultdict(int)
+            contract_types_data = defaultdict(int)
+            amounts_data = []
+            vendors_data = defaultdict(float)
+            
+            # Process results
+            for contract in results:
+                # Track fiscal years
+                if contract.get("fiscal_year"):
+                    try:
+                        year = str(contract["fiscal_year"]).strip()
+                        if year.isdigit():
+                            years_data[year] += 1
+                    except (ValueError, TypeError):
+                        pass
+                
+                # Track agencies
+                if contract.get("agency_name"):
+                    agencies_data[contract["agency_name"]] += 1
+                
+                # Track contract types
+                if contract.get("contract_type"):
+                    contract_type = contract["contract_type"]
+                    contract_type_display = self.CONTRACT_TYPES.get(contract_type, contract_type)
+                    contract_types_data[contract_type_display] += 1
+                
+                # Track contract amounts
+                if contract.get("maximum_contract_amount") and contract.get("start_date"):
+                    try:
+                        amount = float(contract["maximum_contract_amount"])
+                        start_date = contract["start_date"]
+                        amounts_data.append((start_date, amount))
+                        
+                        # Also track amounts by vendor
+                        if contract.get("vendor_name"):
+                            vendors_data[contract["vendor_name"]] += amount
+                    except (ValueError, TypeError):
+                        pass
+            
+            # Sort years data
+            sorted_years = sorted(years_data.items())
+            years_chart = {
+                "labels": [year for year, _ in sorted_years],
+                "values": [count for _, count in sorted_years]
+            }
+            
+            # Get top agencies
+            top_agencies = sorted(agencies_data.items(), key=lambda x: x[1], reverse=True)[:10]
+            agencies_chart = {
+                "labels": [name for name, _ in top_agencies],
+                "values": [count for _, count in top_agencies]
+            }
+            
+            # Get contract types
+            contract_types_chart = {
+                "labels": list(contract_types_data.keys()),
+                "values": list(contract_types_data.values())
+            }
+            
+            # Process amounts data
+            amounts_by_period = defaultdict(float)
+            for date, amount in amounts_data:
+                # Convert to year-quarter format
+                if isinstance(date, str):
+                    try:
+                        date_obj = datetime.strptime(date, "%Y-%m-%d")
+                        quarter = (date_obj.month - 1) // 3 + 1
+                        period = f"{date_obj.year}-Q{quarter}"
+                    except:
+                        # If parse fails, use the year part
+                        period = date[:4] if len(date) >= 4 else "Unknown"
+                else:
+                    period = "Unknown"
+                
+                amounts_by_period[period] += amount
+            
+            # Sort by period
+            sorted_amounts = sorted(amounts_by_period.items())
+            amounts_chart = {
+                "labels": [period for period, _ in sorted_amounts],
+                "values": [amount for _, amount in sorted_amounts]
+            }
+            
+            # Get top vendors by contract amount
+            top_vendors = sorted(vendors_data.items(), key=lambda x: x[1], reverse=True)[:10]
+            vendors_chart = {
+                "labels": [name for name, _ in top_vendors],
+                "values": [amount for _, amount in top_vendors]
+            }
+            
+            visualization_data = {
+                "years_data": years_chart,
+                "top_entities": agencies_chart,  # Map to standardized name for compatibility
+                "spending_trend": amounts_chart,
+                "contract_types": contract_types_chart,
+                "top_vendors": vendors_chart
+            }
+            
+            return visualization_data, None
+            
+        except Exception as e:
+            logger.error(f"Error generating visualization data: {str(e)}")
+            return None, f"An error occurred while generating visualization data: {str(e)}"
+            
+    @property
+    def source_name(self) -> str:
+        """Return the name of this data source."""
+        return "NYC Checkbook"
+    
+    @property
+    def government_level(self) -> str:
+        """Return the level of government (Federal, State, Local)."""
+        return "Local"
