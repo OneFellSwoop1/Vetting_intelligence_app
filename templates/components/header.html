@@ -1,0 +1,22 @@
+<!-- templates/components/header.html -->
+<nav class="bg-white shadow fixed w-full z-20 top-0">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between h-16">
+      <div class="flex">
+        <div class="flex-shrink-0 flex items-center">
+          <a href="{{ url_for('index') }}" class="flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-primary-600 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+            </svg>
+            <span class="font-bold text-xl text-neutral-800">Vetting Intelligence Hub</span>
+          </a>
+        </div>
+        <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
+          <!-- Navigation Links -->
+          <a href="{{ url_for('index') }}" class="{% if request.endpoint == 'index' %}border-primary-500 text-neutral-900{% else %}border-transparent text-neutral-500 hover:border-neutral-300 hover:text-neutral-700{% endif %} inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+            Home
+          </a>
+          <a href="#" class="border-transparent text-neutral-500 hover:border-neutral-300 hover:text-neutral-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+            Federal Data
+          </a>
+          <a href="#" class="border-transparent text-neutral-500 hover:border-neutral-300 hover:text-neutral-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">

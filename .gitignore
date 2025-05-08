@@ -1,0 +1,58 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+venv/
+ENV/
+.env
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Logs
+logs/*
+!logs/.gitkeep
+
+# Cache
+cache/*
+!cache/.gitkeep
+
+# Node modules (for Tailwind)
+node_modules/
+
+# Compiled CSS
+static/css/tailwind/output.css
+
+# Testing
+.coverage
+htmlcov/
+.pytest_cache/
+
+# Mac OS
+.DS_Store
+
+# Windows
+Thumbs.db
+desktop.ini

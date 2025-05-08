@@ -1,0 +1,40 @@
+vetting-intelligence-hub/
+├── app.py                           # Main Flask application
+├── .env                             # Environment variables (API keys)
+├── requirements.txt                 # Project dependencies
+├── README.md                        # Project documentation
+├── .gitignore                       # Git ignore file
+├── static/                          # Static assets
+│   ├── css/                         # CSS styles
+│   │   ├── tailwind/                # Tailwind CSS files
+│   │   │   ├── input.css            # Tailwind input file
+│   │   │   └── output.css           # Compiled Tailwind CSS
+│   │   └── style.css                # Additional custom styles
+│   ├── js/                          # JavaScript files
+│   │   └── search_form.js           # Search form functionality
+│   └── img/                         # Images
+│       └── logo.svg                 # Logo file
+├── templates/                       # HTML templates
+│   ├── index.html                   # Homepage
+│   ├── results.html                 # Search results page
+│   ├── filing_detail.html           # Filing details page
+│   ├── visualize.html               # Data visualization page
+│   └── components/                  # Reusable components
+│       └── header.html              # Header component
+├── data_sources/                    # Data source implementations
+│   ├── __init__.py                  # Package initialization
+│   ├── base.py                      # Base data source class
+│   ├── improved_senate_lda.py       # Senate LDA data source
+│   ├── nyc.py                       # NYC Lobbying data source
+│   └── nyc_checkbook.py             # NYC Checkbook data source
+├── utils/                           # Utility functions
+│   ├── __init__.py                  # Package initialization
+│   ├── caching.py                   # Caching utilities
+│   ├── error_handling.py            # Error handling utilities
+│   └── visualization.py             # Data visualization utilities
+├── logs/                            # Log directory
+│   └── .gitkeep                     # Keep directory in git
+├── cache/                           # Cache directory
+│   └── .gitkeep                     # Keep directory in git
+├── tailwind.config.js               # Tailwind configuration
+└── postcss.config.js                # PostCSS configuration
