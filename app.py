@@ -18,6 +18,7 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 from flask_wtf.csrf import CSRFProtect
+import logging.handlers
 
 # Import data sources
 from data_sources.improved_senate_lda import ImprovedSenateLDADataSource
@@ -154,7 +155,6 @@ try:
     # Initialize with real API data and credentials
     nyc_checkbook = NYCCheckbookDataSource(
         api_app_token=NYC_API_APP_TOKEN,
-        api_secret=NYC_API_SECRET,
         use_mock_data=False
     )
     logger.info("Successfully initialized NYC Checkbook data source with API credentials")
@@ -166,7 +166,6 @@ try:
         logger.warning("Falling back to mock data for NYC Checkbook")
         nyc_checkbook = NYCCheckbookDataSource(
             api_app_token=NYC_API_APP_TOKEN,
-            api_secret=NYC_API_SECRET,
             use_mock_data=True
         )
     
@@ -178,7 +177,6 @@ except Exception as e:
     # Fall back to mock data
     nyc_checkbook = NYCCheckbookDataSource(
         api_app_token=NYC_API_APP_TOKEN,
-        api_secret=NYC_API_SECRET,
         use_mock_data=True
     )
     logger.info("Falling back to mock data for NYC Checkbook")
@@ -515,8 +513,8 @@ def export_results():
         fields = ['filing_uuid', 'filing_type', 'filing_year', 'registrant.name', 'client.name', 'income', 'expenses', 'filing_date']
         headers = ['Filing ID', 'Type', 'Year', 'Registrant', 'Client', 'Income', 'Expenses', 'Date']
     elif data_source == 'nyc_checkbook':
-        fields = ['contract_id', 'contract_type', 'fiscal_year', 'vendor_name', 'agency_name', 'maximum_contract_amount', 'start_date', 'end_date']
-        headers = ['Contract ID', 'Type', 'Year', 'Vendor', 'Agency', 'Amount', 'Start Date', 'End Date']
+        fields = ['contract_id', 'contract_type', 'fiscal_year', 'payee_name', 'agency_name', 'maximum_contract_amount', 'start_date', 'end_date']
+        headers = ['Contract ID', 'Type', 'Year', 'Payee', 'Agency', 'Amount', 'Start Date', 'End Date']
     else:
         fields = []
         headers = []
@@ -740,6 +738,71 @@ def about():
 def sources():
     """Page with information about the data sources."""
     return render_template('sources.html')
+
+@app.route('/diagnostics', methods=['GET'])
+def diagnostics():
+    """API diagnostics endpoint for all data sources."""
+    results = {}
+
+    # Senate LDA diagnostics
+    try:
+        senate_status = {'status': 'unavailable', 'error': None}
+        if data_sources.get('senate'):
+            ds = data_sources['senate']
+            if hasattr(ds, 'session') and hasattr(ds, 'api_base_url'):
+                resp = ds.session.get(f"{ds.api_base_url}/filings/?limit=1", timeout=10)
+                if resp.status_code == 200:
+                    senate_status['status'] = 'ok'
+                else:
+                    senate_status['error'] = f"Status code: {resp.status_code}, Body: {resp.text[:200]}"
+            else:
+                senate_status['error'] = 'Senate data source not properly initialized.'
+        else:
+            senate_status['error'] = 'Senate data source not available.'
+        results['senate_lda'] = senate_status
+    except Exception as e:
+        results['senate_lda'] = {'status': 'error', 'error': str(e)}
+
+    # NYC Lobbying diagnostics
+    try:
+        nyc_status = {'status': 'unavailable', 'error': None}
+        if data_sources.get('nyc'):
+            ds = data_sources['nyc']
+            if hasattr(ds, 'session') and hasattr(ds, 'api_base_url'):
+                resp = ds.session.get(f"{ds.api_base_url}/lobbyists", params={'limit': 1}, timeout=10)
+                if resp.status_code == 200:
+                    nyc_status['status'] = 'ok'
+                else:
+                    nyc_status['error'] = f"Status code: {resp.status_code}, Body: {resp.text[:200]}"
+            else:
+                nyc_status['error'] = 'NYC data source not properly initialized.'
+        else:
+            nyc_status['error'] = 'NYC data source not available.'
+        results['nyc_lobbying'] = nyc_status
+    except Exception as e:
+        results['nyc_lobbying'] = {'status': 'error', 'error': str(e)}
+
+    # NYC Checkbook diagnostics
+    try:
+        checkbook_status = {'status': 'unavailable', 'error': None}
+        if data_sources.get('nyc_checkbook'):
+            ds = data_sources['nyc_checkbook']
+            if hasattr(ds, 'session') and hasattr(ds, 'api_base_url') and hasattr(ds, 'datasets'):
+                url = f"{ds.api_base_url}/{ds.datasets['contracts']}.json"
+                resp = ds.session.get(url, params={'$limit': 1}, timeout=10)
+                if resp.status_code == 200:
+                    checkbook_status['status'] = 'ok'
+                else:
+                    checkbook_status['error'] = f"Status code: {resp.status_code}, Body: {resp.text[:200]}"
+            else:
+                checkbook_status['error'] = 'NYC Checkbook data source not properly initialized.'
+        else:
+            checkbook_status['error'] = 'NYC Checkbook data source not available.'
+        results['nyc_checkbook'] = checkbook_status
+    except Exception as e:
+        results['nyc_checkbook'] = {'status': 'error', 'error': str(e)}
+
+    return jsonify(results)
 
 @app.errorhandler(404)
 def page_not_found(e):

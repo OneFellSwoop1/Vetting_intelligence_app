@@ -939,3 +939,57 @@ class NYCLobbyingDataSource(LobbyingDataSource):
     def government_level(self) -> str:
         """Return the level of government (Federal, State, Local)."""
         return "Local"
+
+class NYCCityClerkELobbyistDataSource(LobbyingDataSource):
+    """NYC City Clerk eLobbyist OpenData data source."""
+    def __init__(self, api_base_url="https://data.cityofnewyork.us/resource/fmf3-knd8.json", api_app_token=None, use_mock_data=False):
+        self.api_base_url = api_base_url
+        self.api_app_token = api_app_token
+        self.use_mock_data = use_mock_data
+        self.session = requests.Session()
+        self.session.headers.update({
+            'Accept': 'application/json',
+            'User-Agent': 'VettingIntelligenceHub/1.0'
+        })
+        if self.api_app_token:
+            self.session.headers.update({'X-App-Token': self.api_app_token})
+
+    def search_filings(self, query, filters=None, page=1, page_size=25):
+        if not query:
+            return [], 0, {"total_pages": 0}, "Search query is required"
+        if filters is None:
+            filters = {}
+        try:
+            offset = (page - 1) * page_size
+            # Example: search by client_name, lobbyist_name, or year
+            where_clauses = []
+            if filters.get('search_type') == 'client':
+                where_clauses.append(f"upper(client_name) like '%{query.upper()}%'")
+            elif filters.get('search_type') == 'lobbyist':
+                where_clauses.append(f"upper(lobbyist_name) like '%{query.upper()}%'")
+            else:
+                where_clauses.append(f"(upper(client_name) like '%{query.upper()}%' or upper(lobbyist_name) like '%{query.upper()}%')")
+            if 'filing_year' in filters and filters['filing_year'] != 'all':
+                where_clauses.append(f"year = '{filters['filing_year']}'")
+            where_clause = ' AND '.join(where_clauses)
+            params = {
+                "$where": where_clause,
+                "$limit": page_size,
+                "$offset": offset
+            }
+            response = self.session.get(self.api_base_url, params=params, timeout=30)
+            if response.status_code != 200:
+                return [], 0, {}, f"API error: {response.status_code} - {response.text[:200]}"
+            results = response.json()
+            count = len(results)
+            pagination = {
+                "count": count,
+                "page": page,
+                "page_size": page_size,
+                "total_pages": 1,
+                "has_next": False,
+                "has_prev": page > 1
+            }
+            return results, count, pagination, None
+        except Exception as e:
+            return [], 0, {}, str(e)

@@ -48,7 +48,7 @@ class NYCCheckbookDataSource(LobbyingDataSource):
         
         # Define dataset IDs for NYC Checkbook data
         self.datasets = {
-            'contracts': '6vm5-bzd6',  # Active Expense Contracts
+            'contracts': 'mxwn-eh3b',  # Correct CheckbookNYC dataset
             'spending': 'bmes-97ch',   # Spending by Contract
             'payroll': 'k397-673e',    # Citywide Payroll Data
             'capital': 'rssh-rpwd',    # Capital Projects
@@ -135,61 +135,39 @@ class NYCCheckbookDataSource(LobbyingDataSource):
             logger.error(traceback.format_exc())
             return [], 0, {}, error_message
 
-    def _search_contracts_by_vendor(self, vendor_name, filters, page, page_size):
-        """Search for contracts where the vendor name matches the query."""
+    def _search_contracts_by_vendor(self, payee_name, filters, page, page_size):
+        """Search for contracts where the payee name matches the query."""
         try:
-            # Construct SoQL query (Socrata Open Data Query Language)
             offset = (page - 1) * page_size
-            
-            # Build WHERE clause for vendor name (using LIKE for partial matching)
-            where_clause = f"UPPER(vendor_name) LIKE '%{vendor_name.upper()}%'"
-            
-            # Add year filter if specified
+            where_clause = f"UPPER(payee_name) LIKE '%{payee_name.upper()}%'"
             if 'filing_year' in filters and filters['filing_year'] != 'all':
                 try:
                     year = int(filters['filing_year'])
                     where_clause += f" AND fiscal_year={year}"
                 except (ValueError, TypeError):
                     pass
-            
-            # Add specific filters based on contract data
             if 'contract_type' in filters and filters['contract_type'] != 'all':
                 where_clause += f" AND contract_type='{filters['contract_type']}'"
-            
             if 'amount_min' in filters and filters['amount_min']:
                 try:
                     min_amount = float(filters['amount_min'])
-                    where_clause += f" AND maximum_contract_amount>={min_amount}"
+                    where_clause += f" AND contract_amount>={min_amount}"
                 except (ValueError, TypeError):
                     pass
-            
-            # Construct the full SoQL query
             query = f"$where={where_clause}&$order=end_date DESC&$limit={page_size}&$offset={offset}"
-            
-            # Add count to get total number of matching records
             count_query = f"$where={where_clause}&$select=COUNT(*) AS count"
-            
-            # Execute count query
             count_url = f"{self.api_base_url}/{self.datasets['contracts']}.json?{count_query}"
             count_response = self.session.get(count_url, timeout=30)
-            
             if count_response.status_code != 200:
                 return [], 0, {}, f"API error: {count_response.status_code}"
-            
             count_data = count_response.json()
             total_count = int(count_data[0]['count']) if count_data else 0
-            
-            # Execute main query
             url = f"{self.api_base_url}/{self.datasets['contracts']}.json?{query}"
             response = self.session.get(url, timeout=30)
-            
             if response.status_code != 200:
                 return [], 0, {}, f"API error: {response.status_code}"
-            
             contracts = response.json()
-            
-            # Calculate pagination info
-            total_pages = (total_count + page_size - 1) // page_size  # Ceiling division
+            total_pages = (total_count + page_size - 1) // page_size
             pagination = {
                 "count": total_count,
                 "page": page,
@@ -198,13 +176,9 @@ class NYCCheckbookDataSource(LobbyingDataSource):
                 "has_next": page < total_pages,
                 "has_prev": page > 1
             }
-            
             return contracts, total_count, pagination, None
-            
         except Exception as e:
-            error_message = f"Error searching contracts by vendor: {str(e)}"
-            logger.error(error_message)
-            return [], 0, {}, error_message
+            return [], 0, {}, str(e)
 
     def _search_contracts_by_agency(self, agency_name, filters, page, page_size):
         """Search for contracts where the agency matches the query."""
