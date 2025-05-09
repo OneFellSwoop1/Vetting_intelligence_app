@@ -1,0 +1,320 @@
+<!-- templates/filing_detail.html -->
+{% extends "base.html" %}
+
+{% block title %}Filing Details{% endblock %}
+
+{% block content %}
+<section class="py-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Breadcrumbs -->
+    <nav class="flex mb-6" aria-label="Breadcrumb">
+      <ol class="flex items-center space-x-4">
+        <li>
+          <div>
+            <a href="{{ url_for('index') }}" class="text-neutral-500 hover:text-neutral-700">
+              <svg class="flex-shrink-0 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+              </svg>
+              <span class="sr-only">Home</span>
+            </a>
+          </div>
+        </li>
+        <li>
+          <div class="flex items-center">
+            <svg class="flex-shrink-0 h-5 w-5 text-neutral-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+              <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+            </svg>
+            <a href="{{ url_for('search', query=request.args.get('query', ''), data_source=data_source) }}" class="ml-4 text-sm font-medium text-neutral-500 hover:text-neutral-700">Search Results</a>
+          </div>
+        </li>
+        <li>
+          <div class="flex items-center">
+            <svg class="flex-shrink-0 h-5 w-5 text-neutral-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+              <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+            </svg>
+            <span class="ml-4 text-sm font-medium text-neutral-700">Filing Details</span>
+          </div>
+        </li>
+      </ol>
+    </nav>
+
+    <!-- Filing Header -->
+    <div class="bg-white shadow rounded-lg overflow-hidden mb-8">
+      <div class="px-6 py-5 border-b border-neutral-200 bg-neutral-50">
+        <div class="flex items-center justify-between">
+          <h1 class="text-xl font-bold text-neutral-900">
+            {% if data_source == 'nyc_checkbook' %}
+            Contract Details
+            {% else %}
+            Filing Details
+            {% endif %}
+          </h1>
+          <span class="inline-flex rounded-md shadow-sm">
+            <a href="{{ filing.document_url }}" target="_blank" class="btn-outline text-sm" {% if not filing.document_url %}disabled{% endif %}>
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+              </svg>
+              View Original Document
+            </a>
+          </span>
+        </div>
+        <p class="mt-2 text-sm text-neutral-500">
+          {{ source_name }} • {{ filing.filing_type_display if filing.filing_type_display else filing.filing_type }}
+        </p>
+      </div>
+      <div class="px-6 py-5">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <h2 class="text-lg font-medium text-neutral-900 mb-4">Filing Information</h2>
+            <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-3">
+              <div class="sm:col-span-2">
+                <dt class="text-sm font-medium text-neutral-500">ID</dt>
+                <dd class="mt-1 text-sm text-neutral-900 font-mono">{{ filing.filing_uuid }}</dd>
+              </div>
+              <div>
+                <dt class="text-sm font-medium text-neutral-500">Type</dt>
+                <dd class="mt-1 text-sm text-neutral-900">{{ filing.filing_type_display if filing.filing_type_display else filing.filing_type }}</dd>
+              </div>
+              <div>
+                <dt class="text-sm font-medium text-neutral-500">Year</dt>
+                <dd class="mt-1 text-sm text-neutral-900">{{ filing.filing_year }}</dd>
+              </div>
+              <div>
+                <dt class="text-sm font-medium text-neutral-500">Filing Date</dt>
+                <dd class="mt-1 text-sm text-neutral-900">{{ filing.filing_date or filing.dt_posted or 'N/A' }}</dd>
+              </div>
+              <div>
+                <dt class="text-sm font-medium text-neutral-500">Period</dt>
+                <dd class="mt-1 text-sm text-neutral-900">{{ filing.period_display or filing.filing_period or 'N/A' }}</dd>
+              </div>
+              {% if data_source == 'nyc_checkbook' %}
+              <div>
+                <dt class="text-sm font-medium text-neutral-500">Start Date</dt>
+                <dd class="mt-1 text-sm text-neutral-900">{{ filing.start_date or 'N/A' }}</dd>
+              </div>
+              <div>
+                <dt class="text-sm font-medium text-neutral-500">End Date</dt>
+                <dd class="mt-1 text-sm text-neutral-900">{{ filing.end_date or 'N/A' }}</dd>
+              </div>
+              {% endif %}
+              <div class="sm:col-span-2">
+                <dt class="text-sm font-medium text-neutral-500">Amount</dt>
+                <dd class="mt-1 text-sm font-medium text-secondary-600">
+                  {% if filing.amount %}
+                  ${{ filing.amount|int|format(',d') }}
+                  {% elif filing.income %}
+                  ${{ filing.income|int|format(',d') }} (Income)
+                  {% elif filing.expenses %}
+                  ${{ filing.expenses|int|format(',d') }} (Expenses)
+                  {% else %}
+                  Not reported
+                  {% endif %}
+                </dd>
+              </div>
+            </dl>
+          </div>
+          
+          <div>
+            <h2 class="text-lg font-medium text-neutral-900 mb-4">
+              {% if data_source == 'nyc_checkbook' %}
+              Parties
+              {% else %}
+              Entities
+              {% endif %}
+            </h2>
+            <div class="space-y-6">
+              <!-- Registrant / Vendor -->
+              <div>
+                <h3 class="text-sm font-medium text-neutral-500">
+                  {% if data_source == 'nyc_checkbook' %}
+                  Vendor
+                  {% else %}
+                  Registrant (Lobbying Firm)
+                  {% endif %}
+                </h3>
+                <div class="mt-2 bg-neutral-50 p-3 rounded-md border border-neutral-200">
+                  <p class="text-sm font-medium text-neutral-900">{{ filing.registrant.name }}</p>
+                  {% if filing.registrant.description %}
+                  <p class="text-sm text-neutral-600 mt-1">{{ filing.registrant.description }}</p>
+                  {% endif %}
+                  {% if filing.registrant.address %}
+                  <p class="text-sm text-neutral-500 mt-1">{{ filing.registrant.address }}</p>
+                  {% endif %}
+                  {% if filing.registrant.contact %}
+                  <p class="text-sm text-neutral-500 mt-1">Contact: {{ filing.registrant.contact }}</p>
+                  {% endif %}
+                </div>
+              </div>
+              
+              <!-- Client / Agency -->
+              <div>
+                <h3 class="text-sm font-medium text-neutral-500">
+                  {% if data_source == 'nyc_checkbook' %}
+                  Agency
+                  {% else %}
+                  Client
+                  {% endif %}
+                </h3>
+                <div class="mt-2 bg-neutral-50 p-3 rounded-md border border-neutral-200">
+                  <p class="text-sm font-medium text-neutral-900">{{ filing.client.name }}</p>
+                  {% if filing.client.description %}
+                  <p class="text-sm text-neutral-600 mt-1">{{ filing.client.description }}</p>
+                  {% endif %}
+                  {% if filing.client.address %}
+                  <p class="text-sm text-neutral-500 mt-1">{{ filing.client.address }}</p>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Activities Section -->
+    <div class="bg-white shadow rounded-lg overflow-hidden mb-8">
+      <div class="px-6 py-5 border-b border-neutral-200 bg-neutral-50">
+        <h2 class="text-lg font-medium text-neutral-900">
+          {% if data_source == 'nyc_checkbook' %}
+          Contract Details
+          {% else %}
+          Lobbying Activities
+          {% endif %}
+        </h2>
+      </div>
+      <div class="px-6 py-5">
+        {% if filing.lobbying_activities %}
+        <ul class="divide-y divide-neutral-200">
+          {% for activity in filing.lobbying_activities %}
+          <li class="py-4 {% if not loop.first %}pt-5{% endif %}">
+            <div class="flex space-x-3">
+              <div class="flex-shrink-0">
+                {% if data_source == 'nyc_checkbook' %}
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-secondary-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                {% else %}
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-primary-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+                </svg>
+                {% endif %}
+              </div>
+              <div class="min-w-0 flex-1">
+                <p class="text-sm font-medium text-neutral-900">
+                  {% if activity.general_issue_code_display %}
+                  <span class="badge badge-blue mr-2">{{ activity.general_issue_code_display }}</span>
+                  {% endif %}
+                </p>
+                <p class="text-sm text-neutral-700 mt-2">{{ activity.description }}</p>
+                
+                {% if activity.government_entities %}
+                <div class="mt-3">
+                  <h4 class="text-xs font-medium text-neutral-500 uppercase">Entities Contacted:</h4>
+                  <ul class="mt-1 space-y-1">
+                    {% for entity in activity.government_entities %}
+                    <li class="text-sm text-neutral-600 flex items-center">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-neutral-400 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                      </svg>
+                      {{ entity.name }}
+                      {% if entity.type %}
+                      <span class="text-xs text-neutral-400 ml-1">({{ entity.type }})</span>
+                      {% endif %}
+                    </li>
+                    {% endfor %}
+                  </ul>
+                </div>
+                {% endif %}
+                
+                {% if activity.lobbyists %}
+                <div class="mt-3">
+                  <h4 class="text-xs font-medium text-neutral-500 uppercase">Lobbyists:</h4>
+                  <ul class="mt-1 space-y-1">
+                    {% for lobbyist_entry in activity.lobbyists %}
+                    <li class="text-sm text-neutral-600">
+                      {{ lobbyist_entry.lobbyist.first_name }} {{ lobbyist_entry.lobbyist.middle_name if lobbyist_entry.lobbyist.middle_name }} {{ lobbyist_entry.lobbyist.last_name }}
+                      {% if lobbyist_entry.covered_position %}
+                      <span class="text-xs text-neutral-400 ml-1">({{ lobbyist_entry.covered_position }})</span>
+                      {% endif %}
+                    </li>
+                    {% endfor %}
+                  </ul>
+                </div>
+                {% endif %}
+              </div>
+            </div>
+          </li>
+          {% endfor %}
+        </ul>
+        {% else %}
+        <div class="text-center py-6">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-neutral-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <h3 class="mt-2 text-sm font-medium text-neutral-900">No activities listed</h3>
+          <p class="mt-1 text-sm text-neutral-500">No detailed activity information is available for this filing.</p>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Additional Information -->
+    {% if data_source == 'nyc_checkbook' and (filing.spend_to_date or filing.balance or filing.original_amount) %}
+    <div class="bg-white shadow rounded-lg overflow-hidden mb-8">
+      <div class="px-6 py-5 border-b border-neutral-200 bg-neutral-50">
+        <h2 class="text-lg font-medium text-neutral-900">Financial Information</h2>
+      </div>
+      <div class="px-6 py-5">
+        <dl class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          {% if filing.original_amount %}
+          <div class="bg-neutral-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 rounded-lg border border-neutral-200">
+            <dt class="text-sm font-medium text-neutral-500">Original Amount</dt>
+            <dd class="mt-1 text-sm text-neutral-900 sm:mt-0 sm:col-span-2">${{ filing.original_amount|int|format(',d') }}</dd>
+          </div>
+          {% endif %}
+          
+          {% if filing.current_amount %}
+          <div class="bg-neutral-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 rounded-lg border border-neutral-200">
+            <dt class="text-sm font-medium text-neutral-500">Current Amount</dt>
+            <dd class="mt-1 text-sm text-neutral-900 sm:mt-0 sm:col-span-2">${{ filing.current_amount|int|format(',d') }}</dd>
+          </div>
+          {% endif %}
+          
+          {% if filing.spend_to_date %}
+          <div class="bg-neutral-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 rounded-lg border border-neutral-200">
+            <dt class="text-sm font-medium text-neutral-500">Spend to Date</dt>
+            <dd class="mt-1 text-sm text-neutral-900 sm:mt-0 sm:col-span-2">${{ filing.spend_to_date|int|format(',d') }}</dd>
+          </div>
+          {% endif %}
+          
+          {% if filing.balance %}
+          <div class="bg-neutral-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 rounded-lg border border-neutral-200">
+            <dt class="text-sm font-medium text-neutral-500">Balance</dt>
+            <dd class="mt-1 text-sm text-neutral-900 sm:mt-0 sm:col-span-2">${{ filing.balance|int|format(',d') }}</dd>
+          </div>
+          {% endif %}
+        </dl>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Actions -->
+    <div class="flex flex-wrap gap-3 mt-8">
+      <a href="{{ url_for('search', query=request.args.get('query', ''), data_source=data_source) }}" class="btn-outline">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+        </svg>
+        Back to Results
+      </a>
+      {% if filing.document_url %}
+      <a href="{{ filing.document_url }}" target="_blank" class="btn-primary">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+        </svg>
+        View Original Document
+      </a>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endblock %}

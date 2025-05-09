@@ -1,0 +1,30 @@
+<!-- templates/404.html -->
+{% extends "base.html" %}
+
+{% block title %}Page Not Found{% endblock %}
+
+{% block content %}
+<section class="py-12">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="max-w-2xl mx-auto text-center">
+      <h1 class="text-4xl font-extrabold text-neutral-900 sm:text-5xl sm:tracking-tight">
+        <span class="block text-primary-600">404</span>
+        <span class="block">Page not found</span>
+      </h1>
+      <p class="mt-4 text-lg text-neutral-500">
+        Sorry, we couldn't find the page you're looking for.
+      </p>
+      <div class="mt-10">
+        <a href="{{ url_for('index') }}" class="btn-primary">
+          Go back home
+        </a>
+      </div>
+      <div class="mt-6">
+        <p class="text-sm text-neutral-500">
+          If you believe this is an error, please contact the administrator.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

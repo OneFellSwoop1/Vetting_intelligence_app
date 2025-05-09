@@ -1,0 +1,184 @@
+<!-- templates/about.html -->
+{% extends "base.html" %}
+
+{% block title %}About{% endblock %}
+
+{% block content %}
+<section class="py-12 bg-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center">
+      <h1 class="text-3xl font-extrabold text-neutral-900 sm:text-4xl">
+        About the Vetting Intelligence Hub
+      </h1>
+      <p class="mt-4 max-w-2xl text-xl text-neutral-500 lg:mx-auto">
+        A comprehensive platform for lobbying disclosure data transparency and ethical decision-making.
+      </p>
+    </div>
+
+    <div class="mt-16">
+      <div class="prose prose-blue mx-auto">
+        <h2>Our Mission</h2>
+        <p>
+          The Vetting Intelligence Hub was created to make lobbying data more accessible, transparent, and actionable. 
+          By integrating multiple data sources into a single platform, we aim to provide journalists, researchers, 
+          ethics officers, and concerned citizens with the tools they need to investigate conflicts of interest, 
+          monitor influence in government, and make more informed decisions.
+        </p>
+
+        <h2>What We Do</h2>
+        <p>
+          Our platform brings together lobbying disclosure data from federal, state, and local sources, enabling users to:
+        </p>
+        <ul>
+          <li>Search across multiple lobbying disclosure databases with a unified interface</li>
+          <li>Identify potential conflicts of interest or overlapping relationships</li>
+          <li>Visualize lobbying trends over time and across entities</li>
+          <li>Investigate specific individuals, organizations, or government agencies</li>
+          <li>Export data for further research and analysis</li>
+        </ul>
+
+        <h2>Our Data Sources</h2>
+        <p>
+          The Vetting Intelligence Hub currently integrates data from the following sources:
+        </p>
+        <ul>
+          <li><strong>Federal Level:</strong> Senate Lobbying Disclosure Act (LDA) database</li>
+          <li><strong>Local Level:</strong> New York City Lobbying Bureau data</li>
+          <li><strong>Local Level:</strong> NYC Checkbook (contracts and spending data)</li>
+        </ul>
+        <p>
+          We are continually working to add more data sources and enhance our existing integrations to provide 
+          the most comprehensive view possible of lobbying and government influence.
+        </p>
+
+        <h2>Why It Matters</h2>
+        <p>
+          Transparency in lobbying and government influence is essential for maintaining public trust and ensuring 
+          ethical governance. By making this data easily accessible and providing tools to analyze it effectively, 
+          we aim to:
+        </p>
+        <ul>
+          <li>Prevent conflicts of interest before they arise</li>
+          <li>Hold power accountable through data-driven journalism and research</li>
+          <li>Enhance public trust through transparent decision-making</li>
+          <li>Empower citizens with information about how lobbying affects governance</li>
+        </ul>
+
+        <h2>Contact Us</h2>
+        <p>
+          For questions, suggestions, or to report issues with the platform, please contact our team at:
+        </p>
+        <p>
+          <strong>Email:</strong> info@vettingintelligencehub.org<br>
+          <strong>Address:</strong> 123 Transparency Way, Suite 400, New York, NY 10001
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Team Section -->
+<section class="py-12 bg-neutral-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center">
+      <h2 class="text-3xl font-extrabold text-neutral-900">
+        Our Team
+      </h2>
+      <p class="mt-4 max-w-2xl text-xl text-neutral-500 lg:mx-auto">
+        Meet the dedicated people behind the Vetting Intelligence Hub.
+      </p>
+    </div>
+
+    <div class="mt-12 space-y-12 lg:grid lg:grid-cols-3 lg:gap-8 lg:space-y-0">
+      <!-- Team Member 1 -->
+      <div class="space-y-4">
+        <div class="aspect-w-3 aspect-h-3">
+          <div class="h-48 w-48 rounded-full mx-auto bg-neutral-200 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-24 w-24 text-neutral-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+          </div>
+        </div>
+        <div class="space-y-2 text-center">
+          <div class="text-lg leading-6 font-medium">
+            <h3>Jane Smith</h3>
+            <p class="text-primary-600">Project Director</p>
+          </div>
+          <div class="text-sm text-neutral-500">
+            <p>Former investigative journalist with over 15 years of experience covering government and lobbying.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Team Member 2 -->
+      <div class="space-y-4">
+        <div class="aspect-w-3 aspect-h-3">
+          <div class="h-48 w-48 rounded-full mx-auto bg-neutral-200 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-24 w-24 text-neutral-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+          </div>
+        </div>
+        <div class="space-y-2 text-center">
+          <div class="text-lg leading-6 font-medium">
+            <h3>Michael Johnson</h3>
+            <p class="text-primary-600">Lead Developer</p>
+          </div>
+          <div class="text-sm text-neutral-500">
+            <p>Data scientist specializing in public records analysis and building open-source transparency tools.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Team Member 3 -->
+      <div class="space-y-4">
+        <div class="aspect-w-3 aspect-h-3">
+          <div class="h-48 w-48 rounded-full mx-auto bg-neutral-200 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-24 w-24 text-neutral-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+          </div>
+        </div>
+        <div class="space-y-2 text-center">
+          <div class="text-lg leading-6 font-medium">
+            <h3>Sarah Chen</h3>
+            <p class="text-primary-600">Data Integration Specialist</p>
+          </div>
+          <div class="text-sm text-neutral-500">
+            <p>Expert in public records and government databases with a background in civic technology and transparency initiatives.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Partners Section -->
+<section class="py-12 bg-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center">
+      <h2 class="text-3xl font-extrabold text-neutral-900">
+        Our Partners
+      </h2>
+      <p class="mt-4 max-w-2xl text-xl text-neutral-500 lg:mx-auto">
+        We collaborate with organizations committed to government transparency and accountability.
+      </p>
+    </div>
+
+    <div class="mt-12 grid grid-cols-2 gap-8 md:grid-cols-4">
+      <div class="col-span-1 flex justify-center py-8 px-8 bg-neutral-50 rounded-lg">
+        <p class="text-lg font-medium text-neutral-900">Transparency Initiative</p>
+      </div>
+      <div class="col-span-1 flex justify-center py-8 px-8 bg-neutral-50 rounded-lg">
+        <p class="text-lg font-medium text-neutral-900">Ethics Institute</p>
+      </div>
+      <div class="col-span-1 flex justify-center py-8 px-8 bg-neutral-50 rounded-lg">
+        <p class="text-lg font-medium text-neutral-900">Open Data Coalition</p>
+      </div>
+      <div class="col-span-1 flex justify-center py-8 px-8 bg-neutral-50 rounded-lg">
+        <p class="text-lg font-medium text-neutral-900">Investigative Reporting Project</p>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

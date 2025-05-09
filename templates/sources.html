@@ -1,0 +1,306 @@
+<!-- templates/sources.html -->
+{% extends "base.html" %}
+
+{% block title %}Data Sources{% endblock %}
+
+{% block content %}
+<section class="py-12 bg-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center">
+      <h1 class="text-3xl font-extrabold text-neutral-900 sm:text-4xl">
+        Our Data Sources
+      </h1>
+      <p class="mt-4 max-w-2xl text-xl text-neutral-500 lg:mx-auto">
+        Comprehensive information about the lobbying and contract data integrated in our platform.
+      </p>
+    </div>
+    
+    <div class="mt-16">
+      <div class="prose prose-blue mx-auto">
+        <p>
+          The Vetting Intelligence Hub integrates data from multiple government sources to provide 
+          a comprehensive view of lobbying activities and government contracts. Below you'll find 
+          detailed information about each of our data sources, including what's included, how often 
+          it's updated, and any limitations you should be aware of.
+        </p>
+      </div>
+      
+      <!-- Federal Sources -->
+      <div class="mt-12">
+        <h2 class="text-2xl font-bold text-neutral-900">Federal Data Sources</h2>
+        
+        <!-- Senate LDA -->
+        <div class="mt-8 bg-white shadow overflow-hidden rounded-lg">
+          <div class="px-6 py-5 border-b border-neutral-200 bg-neutral-50">
+            <div class="flex items-center justify-between">
+              <h3 class="text-lg font-medium text-neutral-900">Senate Lobbying Disclosure Act Database</h3>
+              <span class="badge badge-blue">Federal</span>
+            </div>
+          </div>
+          <div class="px-6 py-5 border-b border-neutral-200">
+            <dl>
+              <div class="sm:grid sm:grid-cols-3 sm:gap-4">
+                <dt class="text-sm font-medium text-neutral-500">Data Source</dt>
+                <dd class="mt-1 text-sm text-neutral-900 sm:mt-0 sm:col-span-2">U.S. Senate Office of Public Records</dd>
+              </div>
+              <div class="mt-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                <dt class="text-sm font-medium text-neutral-500">Website</dt>
+                <dd class="mt-1 text-sm text-neutral-900 sm:mt-0 sm:col-span-2">
+                  <a href="https://lda.senate.gov/system/public/" target="_blank" class="text-primary-600 hover:text-primary-800">https://lda.senate.gov/system/public/</a>
+                </dd>
+              </div>
+              <div class="mt-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                <dt class="text-sm font-medium text-neutral-500">Update Frequency</dt>
+                <dd class="mt-1 text-sm text-neutral-900 sm:mt-0 sm:col-span-2">Quarterly (with some delay in publishing)</dd>
+              </div>
+              <div class="mt-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                <dt class="text-sm font-medium text-neutral-500">Data Available From</dt>
+                <dd class="mt-1 text-sm text-neutral-900 sm:mt-0 sm:col-span-2">1999 to present</dd>
+              </div>
+            </dl>
+          </div>
+          <div class="px-6 py-5">
+            <div class="text-sm text-neutral-700">
+              <h4 class="font-medium text-neutral-900 mb-2">Overview</h4>
+              <p class="mb-4">
+                The Senate Lobbying Disclosure Act (LDA) database contains all lobbying registrations and reports 
+                filed with the Secretary of the Senate as required by the Lobbying Disclosure Act of 1995 (as amended). 
+                This database is the most comprehensive source of federal lobbying activity in the United States.
+              </p>
+              
+              <h4 class="font-medium text-neutral-900 mb-2">What's Included</h4>
+              <ul class="list-disc pl-5 mb-4 space-y-1">
+                <li>Lobbying firm registrations</li>
+                <li>Quarterly reports of lobbying activities</li>
+                <li>Information on clients, lobbyists, and issues</li>
+                <li>Reported income/expenses for lobbying activities</li>
+                <li>Government entities contacted</li>
+                <li>Specific lobbying issues and bill numbers (when disclosed)</li>
+              </ul>
+              
+              <h4 class="font-medium text-neutral-900 mb-2">Limitations</h4>
+              <ul class="list-disc pl-5 mb-4 space-y-1">
+                <li>Relies on self-reporting by lobbying firms and organizations</li>
+                <li>Only includes activities that meet the statutory threshold for disclosure</li>
+                <li>Does not include grassroots lobbying</li>
+                <li>Limited details on specific lobbying activities and contacts</li>
+                <li>Quarterly filing schedule means data can be up to 3-4 months delayed</li>
+              </ul>
+              
+              <div class="mt-6">
+                <a href="{{ url_for('search', data_source='senate', filing_year='2023') }}" class="btn-primary inline-flex">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                  Search Senate LDA Data
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- NYC Sources -->
+      <div class="mt-12">
+        <h2 class="text-2xl font-bold text-neutral-900">New York City Data Sources</h2>
+        
+        <!-- NYC Lobbying -->
+        <div class="mt-8 bg-white shadow overflow-hidden rounded-lg">
+          <div class="px-6 py-5 border-b border-neutral-200 bg-neutral-50">
+            <div class="flex items-center justify-between">
+              <h3 class="text-lg font-medium text-neutral-900">NYC Lobbying Bureau Database</h3>
+              <span class="badge badge-blue">Local</span>
+            </div>
+          </div>
+          <div class="px-6 py-5 border-b border-neutral-200">
+            <dl>
+              <div class="sm:grid sm:grid-cols-3 sm:gap-4">
+                <dt class="text-sm font-medium text-neutral-500">Data Source</dt>
+                <dd class="mt-1 text-sm text-neutral-900 sm:mt-0 sm:col-span-2">New York City Clerk's Office, Lobbying Bureau</dd>
+              </div>
+              <div class="mt-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                <dt class="text-sm font-medium text-neutral-500">Website</dt>
+                <dd class="mt-1 text-sm text-neutral-900 sm:mt-0 sm:col-span-2">
+                  <a href="https://www1.nyc.gov/site/clerk/lobbying/lobbying-bureau.page" target="_blank" class="text-primary-600 hover:text-primary-800">https://www1.nyc.gov/site/clerk/lobbying/lobbying-bureau.page</a>
+                </dd>
+              </div>
+              <div class="mt-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                <dt class="text-sm font-medium text-neutral-500">Update Frequency</dt>
+                <dd class="mt-1 text-sm text-neutral-900 sm:mt-0 sm:col-span-2">Bimonthly reports, with annual registrations</dd>
+              </div>
+              <div class="mt-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                <dt class="text-sm font-medium text-neutral-500">Data Available From</dt>
+                <dd class="mt-1 text-sm text-neutral-900 sm:mt-0 sm:col-span-2">2006 to present</dd>
+              </div>
+            </dl>
+          </div>
+          <div class="px-6 py-5">
+            <div class="text-sm text-neutral-700">
+              <h4 class="font-medium text-neutral-900 mb-2">Overview</h4>
+              <p class="mb-4">
+                The NYC Lobbying Bureau database contains all lobbying activity reported to the City Clerk's 
+                Lobbying Bureau as required by the NYC Lobbying Law. This database provides detailed information 
+                about lobbying activities targeting New York City government officials and agencies.
+              </p>
+              
+              <h4 class="font-medium text-neutral-900 mb-2">What's Included</h4>
+              <ul class="list-disc pl-5 mb-4 space-y-1">
+                <li>Annual lobbying registrations</li>
+                <li>Bimonthly periodic reports</li>
+                <li>Information on clients, lobbyists, and targets</li>
+                <li>Specific subjects and matters lobbied on</li>
+                <li>NYC agencies contacted</li>
+                <li>Compensation and reimbursed expenses</li>
+              </ul>
+              
+              <h4 class="font-medium text-neutral-900 mb-2">Limitations</h4>
+              <ul class="list-disc pl-5 mb-4 space-y-1">
+                <li>Self-reported data with varying levels of detail</li>
+                <li>Limited information on specific meetings or contacts</li>
+                <li>Only covers lobbying of NYC government entities</li>
+                <li>Thresholds for reporting may exclude some activities</li>
+              </ul>
+              
+              <div class="mt-6">
+                <a href="{{ url_for('search', data_source='nyc') }}" class="btn-primary inline-flex">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                  Search NYC Lobbying Data
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- NYC Checkbook -->
+        <div class="mt-8 bg-white shadow overflow-hidden rounded-lg">
+          <div class="px-6 py-5 border-b border-neutral-200 bg-neutral-50">
+            <div class="flex items-center justify-between">
+              <h3 class="text-lg font-medium text-neutral-900">NYC Checkbook (Contract Data)</h3>
+              <span class="badge badge-blue">Local</span>
+            </div>
+          </div>
+          <div class="px-6 py-5 border-b border-neutral-200">
+            <dl>
+              <div class="sm:grid sm:grid-cols-3 sm:gap-4">
+                <dt class="text-sm font-medium text-neutral-500">Data Source</dt>
+                <dd class="mt-1 text-sm text-neutral-900 sm:mt-0 sm:col-span-2">New York City Open Data / Checkbook NYC</dd>
+              </div>
+              <div class="mt-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                <dt class="text-sm font-medium text-neutral-500">Website</dt>
+                <dd class="mt-1 text-sm text-neutral-900 sm:mt-0 sm:col-span-2">
+                  <a href="https://www.checkbooknyc.com/" target="_blank" class="text-primary-600 hover:text-primary-800">https://www.checkbooknyc.com/</a>
+                </dd>
+              </div>
+              <div class="mt-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                <dt class="text-sm font-medium text-neutral-500">Update Frequency</dt>
+                <dd class="mt-1 text-sm text-neutral-900 sm:mt-0 sm:col-span-2">Daily to weekly (varies by dataset)</dd>
+              </div>
+              <div class="mt-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                <dt class="text-sm font-medium text-neutral-500">Data Available From</dt>
+                <dd class="mt-1 text-sm text-neutral-900 sm:mt-0 sm:col-span-2">Fiscal Year 2011 to present</dd>
+              </div>
+            </dl>
+          </div>
+          <div class="px-6 py-5">
+            <div class="text-sm text-neutral-700">
+              <h4 class="font-medium text-neutral-900 mb-2">Overview</h4>
+              <p class="mb-4">
+                Checkbook NYC provides detailed information on New York City's financial transactions, 
+                including contracts, spending, and payroll. Our platform specifically integrates contract 
+                data to help identify relationships between vendors and city agencies.
+              </p>
+              
+              <h4 class="font-medium text-neutral-900 mb-2">What's Included</h4>
+              <ul class="list-disc pl-5 mb-4 space-y-1">
+                <li>Active expense contracts</li>
+                <li>Contract registration details</li>
+                <li>Maximum contract amounts</li>
+                <li>Contract start and end dates</li>
+                <li>Contracting agencies</li>
+                <li>Vendor information</li>
+                <li>Contract purposes and categories</li>
+              </ul>
+              
+              <h4 class="font-medium text-neutral-900 mb-2">Limitations</h4>
+              <ul class="list-disc pl-5 mb-4 space-y-1">
+                <li>Limited historical data before 2011</li>
+                <li>Variations in data quality and completeness across agencies</li>
+                <li>Limited details on contract performance metrics</li>
+                <li>Some contracts may have redacted information for security or privacy reasons</li>
+              </ul>
+              
+              <div class="mt-6">
+                <a href="{{ url_for('search', data_source='nyc_checkbook') }}" class="btn-primary inline-flex">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                  Search NYC Checkbook Data
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Upcoming Data Sources -->
+      <div class="mt-12">
+        <h2 class="text-2xl font-bold text-neutral-900">Upcoming Data Sources</h2>
+        <p class="mt-4 text-neutral-700">
+          We are continuously working to expand our data sources to provide a more comprehensive 
+          view of lobbying and government influence. The following data sources are currently in 
+          development and will be added to the platform in the near future:
+        </p>
+        
+        <div class="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <!-- House Disclosures -->
+          <div class="bg-white shadow rounded-lg overflow-hidden border border-neutral-200">
+            <div class="px-6 py-5 border-b border-neutral-200 bg-neutral-50">
+              <h3 class="text-base font-medium text-neutral-900">House Disclosures</h3>
+              <span class="mt-1 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">Coming Soon</span>
+            </div>
+            <div class="px-6 py-5">
+              <p class="text-sm text-neutral-700">
+                U.S. House of Representatives Financial Disclosure Database including member and staff disclosures.
+              </p>
+            </div>
+          </div>
+          
+          <!-- NY State Lobbying -->
+          <div class="bg-white shadow rounded-lg overflow-hidden border border-neutral-200">
+            <div class="px-6 py-5 border-b border-neutral-200 bg-neutral-50">
+              <h3 class="text-base font-medium text-neutral-900">New York State Lobbying</h3>
+              <span class="mt-1 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">Coming Soon</span>
+            </div>
+            <div class="px-6 py-5">
+              <p class="text-sm text-neutral-700">
+                New York State Joint Commission on Public Ethics (JCOPE) lobbying data for state-level lobbying activities.
+              </p>
+            </div>
+          </div>
+          
+          <!-- Campaign Finance -->
+          <div class="bg-white shadow rounded-lg overflow-hidden border border-neutral-200">
+            <div class="px-6 py-5 border-b border-neutral-200 bg-neutral-50">
+              <h3 class="text-base font-medium text-neutral-900">Campaign Finance Data</h3>
+              <span class="mt-1 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">In Development</span>
+            </div>
+            <div class="px-6 py-5">
+              <p class="text-sm text-neutral-700">
+                Federal Election Commission and state-level campaign contribution data to track political influence.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}sm:col-span-2">New York City Open Data / Checkbook NYC</dd>
+              </div>
+              <div class="mt-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                <dt class="text-sm font-medium text-neutral-500">Website</dt>
+                <dd class="mt-1 text-sm text-neutral-900 sm:mt-0 sm:col-span-2">
+                  <a href="https://www.checkbooknyc.com/" target="_blank" class="text-primary-600 hover:text-primary-800">https://www.checkbooknyc.com/</a>
+                </d

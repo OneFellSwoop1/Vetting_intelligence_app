@@ -1,0 +1,183 @@
+<!-- templates/visualize.html -->
+{% extends "base.html" %}
+
+{% block title %}Data Visualization{% endblock %}
+
+{% block content %}
+<section class="py-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Breadcrumbs -->
+    <nav class="flex mb-6" aria-label="Breadcrumb">
+      <ol class="flex items-center space-x-4">
+        <li>
+          <div>
+            <a href="{{ url_for('index') }}" class="text-neutral-500 hover:text-neutral-700">
+              <svg class="flex-shrink-0 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+              </svg>
+              <span class="sr-only">Home</span>
+            </a>
+          </div>
+        </li>
+        <li>
+          <div class="flex items-center">
+            <svg class="flex-shrink-0 h-5 w-5 text-neutral-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+              <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+            </svg>
+            <a href="{{ url_for('search', query=query, data_source=data_source) }}" class="ml-4 text-sm font-medium text-neutral-500 hover:text-neutral-700">Search Results</a>
+          </div>
+        </li>
+        <li>
+          <div class="flex items-center">
+            <svg class="flex-shrink-0 h-5 w-5 text-neutral-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+              <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+            </svg>
+            <span class="ml-4 text-sm font-medium text-neutral-700">Data Visualization</span>
+          </div>
+        </li>
+      </ol>
+    </nav>
+    
+    <!-- Visualization Header -->
+    <div class="bg-white shadow rounded-lg overflow-hidden mb-8">
+      <div class="px-6 py-5 border-b border-neutral-200 bg-neutral-50">
+        <div class="flex items-center justify-between flex-wrap">
+          <div>
+            <h1 class="text-xl font-bold text-neutral-900">Data Visualization</h1>
+            <p class="mt-1 text-sm text-neutral-500">
+              Visual analysis for "<span class="font-medium">{{ query }}</span>" from {{ source_name }}
+            </p>
+          </div>
+          <div class="mt-4 sm:mt-0">
+            <a href="{{ url_for('search', query=query, data_source=data_source) }}" class="btn-outline text-sm">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              </svg>
+              Back to Results
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="px-6 py-5">
+        <!-- Insights -->
+        <h2 class="text-lg font-medium text-neutral-900 mb-4">Key Insights</h2>
+        <div class="bg-neutral-50 rounded-lg border border-neutral-200 p-4">
+          <ul class="space-y-2">
+            {% for insight in insights %}
+            <li class="flex items-start">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary-500 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span class="text-sm text-neutral-700">{{ insight }}</span>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Visualization Charts -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      {% if 'years_chart' in chart_images %}
+      <!-- Years Activity Chart -->
+      <div class="bg-white shadow rounded-lg overflow-hidden">
+        <div class="px-6 py-5 border-b border-neutral-200">
+          <h2 class="text-lg font-medium text-neutral-900">Activity by Year</h2>
+        </div>
+        <div class="px-6 py-5">
+          <img src="data:image/png;base64,{{ chart_images.years_chart }}" alt="Activity by Year" class="w-full">
+        </div>
+      </div>
+      {% endif %}
+      
+      {% if 'entities_chart' in chart_images %}
+      <!-- Top Entities Chart -->
+      <div class="bg-white shadow rounded-lg overflow-hidden">
+        <div class="px-6 py-5 border-b border-neutral-200">
+          <h2 class="text-lg font-medium text-neutral-900">Top Entities</h2>
+        </div>
+        <div class="px-6 py-5">
+          <img src="data:image/png;base64,{{ chart_images.entities_chart }}" alt="Top Entities" class="w-full">
+        </div>
+      </div>
+      {% endif %}
+      
+      {% if 'spending_chart' in chart_images %}
+      <!-- Spending Trend Chart -->
+      <div class="bg-white shadow rounded-lg overflow-hidden">
+        <div class="px-6 py-5 border-b border-neutral-200">
+          <h2 class="text-lg font-medium text-neutral-900">Spending Trend</h2>
+        </div>
+        <div class="px-6 py-5">
+          <img src="data:image/png;base64,{{ chart_images.spending_chart }}" alt="Spending Trend" class="w-full">
+        </div>
+      </div>
+      {% endif %}
+      
+      {% if 'issues_chart' in chart_images %}
+      <!-- Issue Areas Chart -->
+      <div class="bg-white shadow rounded-lg overflow-hidden">
+        <div class="px-6 py-5 border-b border-neutral-200">
+          <h2 class="text-lg font-medium text-neutral-900">Issue Areas</h2>
+        </div>
+        <div class="px-6 py-5">
+          <img src="data:image/png;base64,{{ chart_images.issues_chart }}" alt="Issue Areas" class="w-full">
+        </div>
+      </div>
+      {% endif %}
+      
+      {% if 'government_chart' in chart_images %}
+      <!-- Government Entities Chart -->
+      <div class="bg-white shadow rounded-lg overflow-hidden">
+        <div class="px-6 py-5 border-b border-neutral-200">
+          <h2 class="text-lg font-medium text-neutral-900">Government Entities</h2>
+        </div>
+        <div class="px-6 py-5">
+          <img src="data:image/png;base64,{{ chart_images.government_chart }}" alt="Government Entities" class="w-full">
+        </div>
+      </div>
+      {% endif %}
+    </div>
+    
+    <!-- Export Options -->
+    <div class="mt-8 bg-white shadow rounded-lg overflow-hidden">
+      <div class="px-6 py-5 border-b border-neutral-200">
+        <h2 class="text-lg font-medium text-neutral-900">Export Options</h2>
+      </div>
+      <div class="px-6 py-5">
+        <div class="flex flex-wrap gap-4">
+          <a href="{{ url_for('export_results', query=query, data_source=data_source) }}" class="btn-outline">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            Export to CSV
+          </a>
+          <button type="button" onclick="window.print()" class="btn-outline">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+            </svg>
+            Print Charts
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Add any JavaScript for interactive visualization here
+  document.addEventListener('DOMContentLoaded', function() {
+    // Make charts responsive
+    const resizeCharts = function() {
+      const charts = document.querySelectorAll('img[alt*="Chart"]');
+      charts.forEach(chart => {
+        chart.style.maxWidth = '100%';
+      });
+    };
+    
+    // Call on load and resize
+    resizeCharts();
+    window.addEventListener('resize', resizeCharts);
+  });
+</script>
+{% endblock %}
